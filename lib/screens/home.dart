@@ -2,6 +2,7 @@ import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/models/folder.dart';
 import 'package:fade_folder_exe/screens/folder_details.dart';
+import 'package:fade_folder_exe/screens/settings.dart';
 import 'package:fade_folder_exe/services/folder.dart';
 import 'package:fade_folder_exe/widgets/custom_button.dart';
 import 'package:fade_folder_exe/widgets/custom_icon_button.dart';
@@ -123,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.settings),
             title: const Text('設定'),
-            body: Container(),
+            body: const SettingsScreen(),
           ),
           PaneItemSeparator(),
           PaneItem(

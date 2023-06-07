@@ -14,7 +14,7 @@ class ConnectionSQLiteService {
     return _instance!;
   }
 
-  static const DATABASE_NAME = 'fade_folder.db';
+  static const DATABASE_NAME = 'fade_folder20230607.db';
   static const DATABASE_VERSION = 1;
   Database? _db;
 
@@ -42,6 +42,14 @@ class ConnectionSQLiteService {
         CREATE TABLE `folder` (
           `id` INTEGER PRIMARY KEY AUTOINCREMENT,
           `name` TEXT,
+          `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      ''');
+      await reference.execute('''
+        CREATE TABLE `file` (
+          `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+          `folderId` INTEGER,
+          `path` TEXT,
           `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
       ''');

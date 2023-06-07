@@ -84,22 +84,11 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
                     widget.folder.name,
                     style: const TextStyle(fontSize: 18),
                   ),
-                  Row(
-                    children: [
-                      CustomIconButton(
-                        iconData: FluentIcons.edit,
-                        iconColor: blackColor,
-                        backgroundColor: blueColor,
-                        onPressed: () {},
-                      ),
-                      const SizedBox(width: 4),
-                      CustomIconButton(
-                        iconData: FluentIcons.delete,
-                        iconColor: blackColor,
-                        backgroundColor: redColor,
-                        onPressed: () {},
-                      ),
-                    ],
+                  CustomIconButton(
+                    iconData: FluentIcons.more_vertical,
+                    iconColor: blackColor,
+                    backgroundColor: whiteColor,
+                    onPressed: () {},
                   ),
                 ],
               ),
