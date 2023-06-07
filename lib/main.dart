@@ -1,6 +1,7 @@
 import 'package:fade_folder_exe/common/style.dart';
-import 'package:fade_folder_exe/screens/home.dart';
+import 'package:fade_folder_exe/screens/splash.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:window_size/window_size.dart';
 
 Future main() async {
@@ -23,10 +24,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const FluentApp(
+    return FluentApp(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('ja')],
+      locale: const Locale('ja'),
       title: appTitle,
-      home: HomeScreen(),
+      theme: themeData(),
+      home: const SplashScreen(),
     );
   }
 }

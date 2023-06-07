@@ -20,7 +20,17 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   fluent_ui: ^4.6.0
+  sqflite: ^2.2.8+4
+  sqflite_common_ffi: ^2.2.5
+  path: ^1.8.3
   intl: ^0.18.0
+  file_selector: ^0.9.3
+  file_selector_windows: ^0.9.2
+  path_provider: ^2.0.15
+  flutter_launcher_icons: ^0.13.1
+  shared_preferences: ^2.1.1
+  http: ^0.13.0
+  device_info_plus: ^8.1.0
 
 dev_dependencies:
   flutter_test:
@@ -31,3 +41,11 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  fonts:
+    - family: SourceHanSansJP-Bold
+      fonts:
+        - asset: assets/fonts/SourceHanSansJP-Bold.otf
+    - family: SourceHanSansJP-Regular
+      fonts:
+        - asset: assets/fonts/SourceHanSansJP-Regular.otf
