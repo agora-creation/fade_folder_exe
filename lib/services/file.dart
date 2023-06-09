@@ -57,4 +57,9 @@ class FileService {
     }
     return error;
   }
+
+  Future truncate() async {
+    Database db = await _getDatabase();
+    await db.delete('file');
+  }
 }

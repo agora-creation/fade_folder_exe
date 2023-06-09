@@ -2,6 +2,7 @@ import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/widgets/custom_border_title.dart';
 import 'package:fade_folder_exe/widgets/custom_button.dart';
+import 'package:fade_folder_exe/widgets/custom_number_box.dart';
 import 'package:fade_folder_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
@@ -15,17 +16,20 @@ class SettingsScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingsScreen> {
   bool lock = false;
   String lockPassword = '';
-  int autoDelete = 0;
+  bool autoDelete = false;
+  int autoDeleteNum = 5;
 
   void _init() async {
     bool tmpLock = await getPrefsBool('lock') ?? false;
     String tmpLockPassword = await getPrefsString('lockPassword') ?? '';
-    int tmpAutoDelete = await getPrefsInt('autoDelete') ?? 0;
+    bool tmpAutoDelete = await getPrefsBool('autoDelete') ?? false;
+    int tmpAutoDeleteNum = await getPrefsInt('autoDeleteNum') ?? 0;
     if (mounted) {
       setState(() {
         lock = tmpLock;
         lockPassword = tmpLockPassword;
         autoDelete = tmpAutoDelete;
+        autoDeleteNum = tmpAutoDeleteNum;
       });
     }
   }
@@ -61,7 +65,8 @@ class _SettingScreenState extends State<SettingsScreen> {
                     onPressed: () async {
                       await setPrefsBool('lock', lock);
                       await setPrefsString('lockPassword', lockPassword);
-                      await setPrefsInt('autoDelete', autoDelete);
+                      await setPrefsBool('autoDelete', autoDelete);
+                      await setPrefsInt('autoDeleteNum', autoDeleteNum);
                       setState(() {});
                       if (!mounted) return;
                       showMessage(context, '設定内容を保存しました', true);
@@ -85,75 +90,44 @@ class _SettingScreenState extends State<SettingsScreen> {
                 content: Text(lock ? 'ロックする' : 'ロックしない'),
               ),
               const SizedBox(height: 8),
-              InfoLabel(
-                label: 'パスワード',
-                child: CustomTextBox(
-                  controller: TextEditingController(text: lockPassword),
-                  onChanged: (value) {
-                    lockPassword = value;
-                  },
-                ),
-              ),
+              lock
+                  ? InfoLabel(
+                      label: 'パスワード',
+                      child: CustomTextBox(
+                        controller: TextEditingController(text: lockPassword),
+                        onChanged: (value) {
+                          lockPassword = value;
+                        },
+                      ),
+                    )
+                  : Container(),
               const SizedBox(height: 16),
               const CustomBorderTitle('自動削除設定'),
               const Text(
                 'ソフトウェアの起動を一定期間確認できなかった場合、このソフトウェア内に入っているデータを全て削除します。削除するまでの期日を設定してください。',
               ),
               const SizedBox(height: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RadioButton(
-                    checked: autoDelete == 0,
-                    onChanged: (value) {
-                      setState(() {
-                        autoDelete = 0;
-                      });
-                    },
-                    content: const Text('自動削除しない'),
-                  ),
-                  const SizedBox(height: 8),
-                  RadioButton(
-                    checked: autoDelete == 5,
-                    onChanged: (value) {
-                      setState(() {
-                        autoDelete = 5;
-                      });
-                    },
-                    content: const Text('閉じてから5日後に自動削除'),
-                  ),
-                  const SizedBox(height: 8),
-                  RadioButton(
-                    checked: autoDelete == 10,
-                    onChanged: (value) {
-                      setState(() {
-                        autoDelete = 10;
-                      });
-                    },
-                    content: const Text('閉じてから10日後に自動削除'),
-                  ),
-                  const SizedBox(height: 8),
-                  RadioButton(
-                    checked: autoDelete == 15,
-                    onChanged: (value) {
-                      setState(() {
-                        autoDelete = 15;
-                      });
-                    },
-                    content: const Text('閉じてから15日後に自動削除'),
-                  ),
-                  const SizedBox(height: 8),
-                  RadioButton(
-                    checked: autoDelete == 30,
-                    onChanged: (value) {
-                      setState(() {
-                        autoDelete = 30;
-                      });
-                    },
-                    content: const Text('閉じてから30日後に自動削除'),
-                  ),
-                ],
-              )
+              ToggleSwitch(
+                checked: autoDelete,
+                onChanged: (value) {
+                  setState(() {
+                    autoDelete = value;
+                  });
+                },
+                content: Text(autoDelete ? '自動削除する' : '自動削除しない'),
+              ),
+              const SizedBox(height: 8),
+              autoDelete
+                  ? InfoLabel(
+                      label: '閉じてから〇日後に自動削除',
+                      child: CustomNumberBox(
+                        value: autoDeleteNum,
+                        onChanged: (value) {
+                          autoDeleteNum = value ?? 0;
+                        },
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),

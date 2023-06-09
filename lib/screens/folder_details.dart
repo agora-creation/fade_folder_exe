@@ -1,16 +1,18 @@
 import 'dart:io';
 
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/models/file.dart';
 import 'package:fade_folder_exe/models/folder.dart';
+import 'package:fade_folder_exe/screens/file_details.dart';
 import 'package:fade_folder_exe/services/file.dart';
 import 'package:fade_folder_exe/services/folder.dart';
 import 'package:fade_folder_exe/widgets/custom_button.dart';
-import 'package:fade_folder_exe/widgets/custom_file_button.dart';
 import 'package:fade_folder_exe/widgets/custom_file_card.dart';
 import 'package:fade_folder_exe/widgets/custom_icon_button.dart';
 import 'package:fade_folder_exe/widgets/custom_text_box.dart';
+import 'package:fade_folder_exe/widgets/file_list_tile.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
@@ -66,88 +68,111 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: whiteColor,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.folder.name,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Row(
-                    children: [
-                      CustomButton(
-                        labelText: 'アップロード',
-                        labelColor: whiteColor,
-                        backgroundColor: blueColor,
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => AddFileDialog(
-                            folder: widget.folder,
-                            getFiles: _getFiles,
-                          ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  widget.folder.name,
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Row(
+                  children: [
+                    checked.isNotEmpty
+                        ? CustomButton(
+                            labelText: '選択したファイルを削除する',
+                            labelColor: whiteColor,
+                            backgroundColor: redColor,
+                            onPressed: () async {
+                              for (int id in checked) {
+                                await fileService.delete(id: id);
+                              }
+                              _getFiles();
+                            },
+                          )
+                        : Container(),
+                    CustomIconButton(
+                      iconData: FluentIcons.more_vertical,
+                      iconColor: blackColor,
+                      backgroundColor: whiteColor,
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => EditFolderDialog(
+                          folder: widget.folder,
+                          init: widget.init,
                         ),
                       ),
-                      checked.isNotEmpty
-                          ? CustomButton(
-                              labelText: '選択したファイルを削除する',
-                              labelColor: whiteColor,
-                              backgroundColor: redColor,
-                              onPressed: () async {
-                                for (int id in checked) {
-                                  await fileService.delete(id: id);
-                                }
-                                _getFiles();
-                              },
-                            )
-                          : Container(),
-                      CustomIconButton(
-                        iconData: FluentIcons.more_vertical,
-                        iconColor: blackColor,
-                        backgroundColor: whiteColor,
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => EditFolderDialog(
-                            folder: widget.folder,
-                            init: widget.init,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Text(
+              'ファイルをドラッグ&ドロップしてください。',
+              style: TextStyle(
+                color: greyColor,
+                fontSize: 12,
               ),
-              const SizedBox(height: 16),
-              files.isNotEmpty
-                  ? GridView.builder(
-                      shrinkWrap: true,
-                      itemCount: files.length,
-                      gridDelegate: kGridSetting,
-                      itemBuilder: (context, index) {
-                        int id = files[index].id ?? 0;
-                        String path = files[index].path;
-                        return CustomFileCard(
-                          file: files[index],
-                          children: [
-                            Checkbox(
-                              checked: checked.contains(id),
-                              onChanged: (value) {
-                                _check(id);
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: DropTarget(
+                onDragDone: (value) => showDialog(
+                  context: context,
+                  builder: (context) => AddFileDialog(
+                    folder: widget.folder,
+                    files: value.files,
+                    getFiles: _getFiles,
+                  ),
+                ),
+                child: files.isNotEmpty
+                    ? SingleChildScrollView(
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: files.length,
+                          gridDelegate: kGridSetting,
+                          itemBuilder: (context, index) {
+                            int id = files[index].id ?? 0;
+                            String path = files[index].path;
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  FluentPageRoute(
+                                    builder: (context) => FileDetailsScreen(
+                                      file: files[index],
+                                    ),
+                                    fullscreenDialog: true,
+                                  ),
+                                );
                               },
-                            ),
-                          ],
-                        );
-                      },
-                    )
-                  : const Text('ファイルがありません'),
-            ],
-          ),
+                              child: CustomFileCard(
+                                file: files[index],
+                                children: [
+                                  Checkbox(
+                                    checked: checked.contains(id),
+                                    onChanged: (value) {
+                                      _check(id);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : const SizedBox(
+                        width: double.infinity,
+                        child: Center(child: Text('ファイルがありません')),
+                      ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -251,10 +276,12 @@ class _EditFolderDialogState extends State<EditFolderDialog> {
 
 class AddFileDialog extends StatefulWidget {
   final FolderModel folder;
+  final List<XFile> files;
   final Function() getFiles;
 
   const AddFileDialog({
     required this.folder,
+    required this.files,
     required this.getFiles,
     super.key,
   });
@@ -265,60 +292,53 @@ class AddFileDialog extends StatefulWidget {
 
 class _AddFileDialogState extends State<AddFileDialog> {
   FileService fileService = FileService();
-  XFile? file;
 
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: const Text(
-        'アップロード',
-        style: TextStyle(fontSize: 18),
+      title: Text(
+        '${widget.files.length}個のファイルを選択中',
+        style: const TextStyle(fontSize: 18),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomFileButton(
-            file: file,
-            onPressed: () async {
-              XTypeGroup group = const XTypeGroup(
-                label: '全てのファイル',
-                extensions: ['*'],
-              );
-              XFile? tmpFile = await openFile(acceptedTypeGroups: [group]);
-              if (tmpFile != null) {
-                setState(() {
-                  file = tmpFile;
-                });
-              }
-            },
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widget.files.map((file) {
+            return FileListTile(file: file);
+          }).toList(),
+        ),
       ),
       actions: [
         CustomButton(
-          labelText: 'いいえ',
+          labelText: 'キャンセル',
           labelColor: whiteColor,
           backgroundColor: greyColor,
           onPressed: () => Navigator.pop(context),
         ),
         CustomButton(
-          labelText: 'はい',
+          labelText: 'アップロードする',
           labelColor: whiteColor,
-          backgroundColor: greyColor,
+          backgroundColor: blueColor,
           onPressed: () async {
-            if (file == null) return;
             final dir = await getApplicationDocumentsDirectory();
-            String savedPath = '${dir.path}/${p.basename(file!.path)}';
-            File savedFile = File(savedPath);
-            await savedFile.writeAsBytes(await file!.readAsBytes());
-            await fileService.insert(
-              folderId: widget.folder.id ?? 0,
-              path: savedPath,
-            );
-            widget.getFiles();
+            if (widget.files.isNotEmpty) {
+              for (XFile file in widget.files) {
+                int folderId = widget.folder.id ?? 0;
+                String savedPath = '${dir.path}/fade_folder/$folderId';
+                await Directory(savedPath).create(recursive: true);
+                savedPath += '/${p.basename(file.path)}';
+                File savedFile = File(savedPath);
+                await savedFile.writeAsBytes(await file.readAsBytes());
+                await fileService.insert(
+                  folderId: folderId,
+                  path: savedPath,
+                );
+              }
+            }
+            await widget.getFiles();
             if (!mounted) return;
-            showMessage(context, 'データを追加しました', true);
+            showMessage(context, 'ファイルをアップロードしました', true);
             Navigator.pop(context);
           },
         ),
