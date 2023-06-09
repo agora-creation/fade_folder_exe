@@ -34,3 +34,10 @@ const TextStyle kAppBarTextStyle = TextStyle(
   fontSize: 18,
   fontWeight: FontWeight.bold,
 );
+
+const SliverGridDelegateWithFixedCrossAxisCount kGridSetting =
+    SliverGridDelegateWithFixedCrossAxisCount(
+  crossAxisSpacing: 8,
+  mainAxisSpacing: 8,
+  crossAxisCount: 5,
+);

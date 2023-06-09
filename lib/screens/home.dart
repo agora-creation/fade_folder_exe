@@ -84,7 +84,10 @@ class _HomeScreenState extends State<HomeScreen> {
               iconData: FluentIcons.info,
               iconColor: whiteColor,
               backgroundColor: mainColor,
-              onPressed: () {},
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => const InfoDialog(),
+              ),
             ),
           ),
         ),
@@ -125,13 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(FluentIcons.settings),
             title: const Text('設定'),
             body: const SettingsScreen(),
-          ),
-          PaneItemSeparator(),
-          PaneItem(
-            selectedTileColor: ButtonState.all(whiteColor),
-            icon: const Icon(FluentIcons.text_document),
-            title: const Text('使い方について'),
-            body: Container(),
           ),
           PaneItemSeparator(),
         ],
@@ -200,6 +196,38 @@ class _AddFolderDialogState extends State<AddFolderDialog> {
             Navigator.pop(context);
           },
         )
+      ],
+    );
+  }
+}
+
+class InfoDialog extends StatelessWidget {
+  const InfoDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'ソフトウェア情報',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('ソフトウェア名: FadeFolder'),
+          Text('バージョン: 1.0.0.0'),
+          SizedBox(height: 32),
+          Center(child: Text('Copyright © 2023 AGORA CREATION'))
+        ],
+      ),
+      actions: [
+        CustomButton(
+          labelText: '閉じる',
+          labelColor: whiteColor,
+          backgroundColor: greyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
       ],
     );
   }

@@ -31,12 +31,32 @@ dependencies:
   shared_preferences: ^2.1.1
   http: ^0.13.0
   device_info_plus: ^8.1.0
+  flutter_dropzone_platform_interface: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  msix: ^3.13.2
+
+msix_config:
+  display_name: FadeFolder
+  publisher_display_name: AGORA CREATION
+  identity_name: com.agoracreation.fadefolder
+  msix_version: 1.0.0.0
+  logo_path: assets/images/logo.png
+  languages: ja-jp
+  publisher: E=agora-c@agora-c.com, CN=AGORA CREATION, O=AGORA CREATION, L=Kochi, S=Kochi, C=JP
+  certificate_path: C:\Users\shima\selfsigned\CERTIFICATE.pfx
+  certificate_password: p@ssw0rd
+  architecture: x64
+  capabilities: ""
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: assets/images/logo.png
+    icon_size: 48
 
 flutter:
 

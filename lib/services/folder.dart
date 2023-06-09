@@ -36,4 +36,35 @@ class FolderService {
     }
     return error;
   }
+
+  Future<String?> update({
+    required int id,
+    required String name,
+  }) async {
+    String? error;
+    try {
+      Database db = await _getDatabase();
+      await db.rawUpdate('''
+        update folder
+        set name = '$name'
+        where id = $id;
+      ''');
+    } catch (e) {
+      error = e.toString();
+    }
+    return error;
+  }
+
+  Future<String?> delete({required int id}) async {
+    String? error;
+    try {
+      Database db = await _getDatabase();
+      await db.rawDelete(
+        'delete from folder where id = $id;',
+      );
+    } catch (e) {
+      error = e.toString();
+    }
+    return error;
+  }
 }
