@@ -34,6 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Duration diff = now.difference(lastTime);
     bool autoDelete = await getPrefsBool('autoDelete') ?? false;
     int autoDeleteNum = await getPrefsInt('autoDeleteNum') ?? 0;
+    String lockPassword = await getPrefsString('lockPassword') ?? '';
     if (autoDelete == true && diff.inDays != 0 && diff.inDays > autoDeleteNum) {
       if (!mounted) return;
       await showDialog(
@@ -42,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
           folderService: folderService,
           fileService: fileService,
           days: diff.inDays,
+          lockPassword: lockPassword,
         ),
       ).then((value) async {
         await _lockCheck();
@@ -95,11 +97,13 @@ class AutoDeleteDialog extends StatefulWidget {
   final FolderService folderService;
   final FileService fileService;
   final int days;
+  final String lockPassword;
 
   const AutoDeleteDialog({
     required this.folderService,
     required this.fileService,
     required this.days,
+    required this.lockPassword,
     super.key,
   });
 
@@ -139,17 +143,29 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
           labelColor: whiteColor,
           backgroundColor: greyColor,
           onPressed: () async {
-            await allRemovePrefs();
-            await widget.folderService.truncate();
-            await widget.fileService.truncate();
-            await Future.delayed(const Duration(seconds: 2));
-            if (!mounted) return;
-            Navigator.pushReplacement(
-              context,
-              FluentPageRoute(
-                builder: (context) => const SplashScreen(),
-              ),
-            );
+            if (widget.lockPassword != password.text) {
+              await allRemovePrefs();
+              await widget.folderService.truncate();
+              await widget.fileService.truncate();
+              await Future.delayed(const Duration(seconds: 2));
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                FluentPageRoute(
+                  builder: (context) => const SplashScreen(),
+                ),
+              );
+            } else {
+              int timestamp = DateTime.now().millisecondsSinceEpoch;
+              await setPrefsInt('lastTime', timestamp);
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                FluentPageRoute(
+                  builder: (context) => const HomeScreen(),
+                ),
+              );
+            }
           },
         ),
       ],
