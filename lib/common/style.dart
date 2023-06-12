@@ -26,13 +26,42 @@ FluentThemeData themeData() {
     navigationPaneTheme: const NavigationPaneThemeData(
       backgroundColor: Color(0xFFE8EAF6),
     ),
+    checkboxTheme: CheckboxThemeData(
+      checkedDecoration: ButtonState.all<Decoration>(
+        BoxDecoration(
+          color: blueColor,
+          border: Border.all(color: blackColor),
+        ),
+      ),
+      uncheckedDecoration: ButtonState.all<Decoration>(
+        BoxDecoration(
+          color: whiteColor,
+          border: Border.all(color: blackColor),
+        ),
+      ),
+    ),
   );
 }
 
-const TextStyle kAppBarTextStyle = TextStyle(
+const TextStyle kAppBarStyle = TextStyle(
   color: whiteColor,
   fontSize: 18,
   fontWeight: FontWeight.bold,
+);
+
+const TextStyle kErrorStyle = TextStyle(
+  color: redColor,
+  fontWeight: FontWeight.bold,
+);
+
+const TextStyle kDialogTitleStyle = TextStyle(
+  fontSize: 18,
+  fontWeight: FontWeight.bold,
+);
+
+const TextStyle kMemoStyle = TextStyle(
+  color: greyColor,
+  fontSize: 12,
 );
 
 const SliverGridDelegateWithFixedCrossAxisCount kGridSetting =

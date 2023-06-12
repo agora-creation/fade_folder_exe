@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+
 class FileModel {
   int? id;
   int folderId;
@@ -33,5 +37,9 @@ class FileModel {
       folderId: 0,
       path: '',
     );
+  }
+
+  Future<Uint8List> getFileData() async {
+    return await File(path).readAsBytes();
   }
 }

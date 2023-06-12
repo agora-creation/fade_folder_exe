@@ -119,7 +119,7 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
     return ContentDialog(
       title: const Text(
         '削除前の通知',
-        style: TextStyle(fontSize: 18),
+        style: kDialogTitleStyle,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -194,18 +194,13 @@ class _PasswordDialogState extends State<PasswordDialog> {
     return ContentDialog(
       title: const Text(
         'パスワードでロックされています',
-        style: TextStyle(fontSize: 18),
+        style: kDialogTitleStyle,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          msg != null
-              ? Text(
-                  '$msg',
-                  style: const TextStyle(color: redColor),
-                )
-              : Container(),
+          msg != null ? Text('$msg', style: kErrorStyle) : Container(),
           InfoLabel(
             label: 'パスワード',
             child: CustomTextBox(

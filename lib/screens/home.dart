@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
         backgroundColor: mainColor,
-        title: const Text(appTitle, style: kAppBarTextStyle),
+        title: const Text(appTitle, style: kAppBarStyle),
         actions: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Align(
@@ -102,10 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'フォルダ一覧',
-                style: TextStyle(fontSize: 14),
-              ),
+              const Text('フォルダ一覧', style: TextStyle(fontSize: 14)),
               CustomIconTextButtonSmall(
                 iconData: FluentIcons.add,
                 iconColor: whiteColor,
@@ -157,7 +154,7 @@ class _AddFolderDialogState extends State<AddFolderDialog> {
     return ContentDialog(
       title: const Text(
         'フォルダ作成',
-        style: TextStyle(fontSize: 18),
+        style: kDialogTitleStyle,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -209,7 +206,7 @@ class InfoDialog extends StatelessWidget {
     return ContentDialog(
       title: const Text(
         'ソフトウェア情報',
-        style: TextStyle(fontSize: 18),
+        style: kDialogTitleStyle,
       ),
       content: const Column(
         mainAxisSize: MainAxisSize.min,

@@ -10,6 +10,8 @@ import 'package:fade_folder_exe/services/file.dart';
 import 'package:fade_folder_exe/services/folder.dart';
 import 'package:fade_folder_exe/widgets/custom_button.dart';
 import 'package:fade_folder_exe/widgets/custom_file_card.dart';
+import 'package:fade_folder_exe/widgets/custom_file_checkbox.dart';
+import 'package:fade_folder_exe/widgets/custom_file_label.dart';
 import 'package:fade_folder_exe/widgets/custom_icon_button.dart';
 import 'package:fade_folder_exe/widgets/custom_text_box.dart';
 import 'package:fade_folder_exe/widgets/file_list_tile.dart';
@@ -92,6 +94,7 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
                               for (int id in checked) {
                                 await fileService.delete(id: id);
                               }
+                              checked.clear();
                               _getFiles();
                             },
                           )
@@ -114,22 +117,22 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
             ),
             const Text(
               'ファイルをドラッグ&ドロップしてください。',
-              style: TextStyle(
-                color: greyColor,
-                fontSize: 12,
-              ),
+              style: kMemoStyle,
             ),
             const SizedBox(height: 16),
             Expanded(
               child: DropTarget(
-                onDragDone: (value) => showDialog(
-                  context: context,
-                  builder: (context) => AddFileDialog(
-                    folder: widget.folder,
-                    files: value.files,
-                    getFiles: _getFiles,
-                  ),
-                ),
+                onDragDone: (value) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AddFileDialog(
+                      folder: widget.folder,
+                      files: value.files,
+                    ),
+                  ).then((value) {
+                    _getFiles();
+                  });
+                },
                 child: files.isNotEmpty
                     ? SingleChildScrollView(
                         child: GridView.builder(
@@ -139,7 +142,8 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
                           itemBuilder: (context, index) {
                             int id = files[index].id ?? 0;
                             String path = files[index].path;
-                            return GestureDetector(
+                            return CustomFileCard(
+                              file: files[index],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -151,17 +155,13 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
                                   ),
                                 );
                               },
-                              child: CustomFileCard(
-                                file: files[index],
-                                children: [
-                                  Checkbox(
-                                    checked: checked.contains(id),
-                                    onChanged: (value) {
-                                      _check(id);
-                                    },
-                                  ),
-                                ],
-                              ),
+                              children: [
+                                CustomFileCheckbox(
+                                  checked: checked.contains(id),
+                                  onChanged: (value) => _check(id),
+                                ),
+                                CustomFileLabel(p.basename(path)),
+                              ],
                             );
                           },
                         ),
@@ -208,7 +208,7 @@ class _EditFolderDialogState extends State<EditFolderDialog> {
     return ContentDialog(
       title: const Text(
         'フォルダ編集',
-        style: TextStyle(fontSize: 18),
+        style: kDialogTitleStyle,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -277,12 +277,10 @@ class _EditFolderDialogState extends State<EditFolderDialog> {
 class AddFileDialog extends StatefulWidget {
   final FolderModel folder;
   final List<XFile> files;
-  final Function() getFiles;
 
   const AddFileDialog({
     required this.folder,
     required this.files,
-    required this.getFiles,
     super.key,
   });
 
@@ -297,8 +295,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Text(
-        '${widget.files.length}個のファイルを選択中',
-        style: const TextStyle(fontSize: 18),
+        '${widget.files.length}個のファイルをアップロード待機中',
+        style: kDialogTitleStyle,
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -336,7 +334,6 @@ class _AddFileDialogState extends State<AddFileDialog> {
                 );
               }
             }
-            await widget.getFiles();
             if (!mounted) return;
             showMessage(context, 'ファイルをアップロードしました', true);
             Navigator.pop(context);
