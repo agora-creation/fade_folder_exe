@@ -16,6 +16,19 @@ class FileDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String extension = p.extension(file.path);
+    Widget imageWidget = Container();
+    if (imageExtension.contains(extension)) {
+      imageWidget = Image.file(
+        File(file.path),
+        fit: BoxFit.fitWidth,
+      );
+    } else {
+      imageWidget = Image.asset(
+        'assets/images/all_file.png',
+        fit: BoxFit.fitWidth,
+      );
+    }
     return ScaffoldPage(
       padding: EdgeInsets.zero,
       header: Container(
@@ -28,6 +41,11 @@ class FileDetailsScreen extends StatelessWidget {
               IconButton(
                 icon: const Icon(FluentIcons.back, color: whiteColor),
                 onPressed: () => Navigator.pop(context),
+              ),
+              Text(
+                p.basename(file.path),
+                style: const TextStyle(color: whiteColor),
+                overflow: TextOverflow.ellipsis,
               ),
               IconButton(
                 icon: const Icon(FluentIcons.download, color: whiteColor),
@@ -51,12 +69,7 @@ class FileDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-      content: Center(
-        child: Image.file(
-          File(file.path),
-          fit: BoxFit.fitWidth,
-        ),
-      ),
+      content: Center(child: imageWidget),
     );
   }
 }

@@ -70,3 +70,44 @@ const SliverGridDelegateWithFixedCrossAxisCount kGridSetting =
   mainAxisSpacing: 8,
   crossAxisCount: 5,
 );
+
+const List<String> imageExtension = [
+  '.HEIC',
+  '.heic',
+  '.JPEG',
+  '.jpeg',
+  '.JPG',
+  '.jpg',
+  '.GIF',
+  '.gif',
+  '.PNG',
+  '.png',
+];
+
+const List<String> videoExtension = [
+  '.MP4',
+  '.mp4',
+  '.MOV',
+  '.mov',
+  '.WMV',
+  '.wmv',
+  '.AVI',
+  '.avi',
+];
+
+const List<String> audioExtension = [
+  '.MP3',
+  '.mp3',
+  '.WMA',
+  '.wma',
+  '.ASF',
+  '.asf',
+  '.3GP',
+  '.3gp',
+  '.3G2',
+  '.3g2',
+  '.AAC',
+  '.aac',
+  '.WAV',
+  '.wav',
+];

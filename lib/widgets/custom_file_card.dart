@@ -1,6 +1,8 @@
+import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/models/file.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
 
 class CustomFileCard extends StatelessWidget {
   final FileModel file;
@@ -25,13 +27,25 @@ class CustomFileCard extends StatelessWidget {
           future: file.getFileData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Container(
-                decoration: BoxDecoration(
+              BoxDecoration background;
+              String extension = p.extension(file.path);
+              if (imageExtension.contains(extension)) {
+                background = BoxDecoration(
                   image: DecorationImage(
                     image: MemoryImage(snapshot.requireData),
                     fit: BoxFit.cover,
                   ),
-                ),
+                );
+              } else {
+                background = const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/all_file.png'),
+                    fit: BoxFit.cover,
+                  ),
+                );
+              }
+              return Container(
+                decoration: background,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
