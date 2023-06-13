@@ -4,18 +4,10 @@ import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/screens/splash.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:launch_at_startup/launch_at_startup.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_size/window_size.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  LaunchAtStartup.instance.setup(
-    appName: packageInfo.appName,
-    appPath: Platform.resolvedExecutable,
-  );
-  await LaunchAtStartup.instance.enable();
   setWindowTitle(appTitle);
   setWindowMinSize(const Size(windowWidth, windowHeight));
   setWindowMaxSize(const Size(windowWidth, windowHeight));
