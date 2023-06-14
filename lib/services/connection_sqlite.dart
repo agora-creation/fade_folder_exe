@@ -14,7 +14,7 @@ class ConnectionSQLiteService {
     return _instance!;
   }
 
-  static const DATABASE_NAME = 'fade_folder20230607.db';
+  static const DATABASE_NAME = 'fade_folder20230614.db';
   static const DATABASE_VERSION = 1;
   Database? _db;
 

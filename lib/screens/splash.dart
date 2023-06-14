@@ -1,3 +1,4 @@
+import 'package:fade_folder_exe/common/folder_controller.dart';
 import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/screens/home.dart';
@@ -32,17 +33,19 @@ class _SplashScreenState extends State<SplashScreen> {
     }
     DateTime now = DateTime.now();
     Duration diff = now.difference(lastTime);
+    int diffDays = diff.inDays;
+    diffDays = 10;
     bool autoDelete = await getPrefsBool('autoDelete') ?? false;
     int autoDeleteNum = await getPrefsInt('autoDeleteNum') ?? 0;
     String lockPassword = await getPrefsString('lockPassword') ?? '';
-    if (autoDelete == true && diff.inDays != 0 && diff.inDays > autoDeleteNum) {
+    if (autoDelete == true && diffDays != 0 && diffDays > autoDeleteNum) {
       if (!mounted) return;
       await showDialog(
         context: context,
         builder: (context) => AutoDeleteDialog(
           folderService: folderService,
           fileService: fileService,
-          days: diff.inDays,
+          days: diffDays,
           lockPassword: lockPassword,
         ),
       ).then((value) async {
@@ -118,15 +121,22 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text(
-        '削除前の通知',
+        '自動削除前の確認',
         style: kDialogTitleStyle,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('最終起動日から${widget.days}日が経過しましたので、ソフトウェア内のデータを全て削除します。'),
-          const Text('最後に確認のため、ロック用パスワードを入力してください。間違えると、全て削除になります。'),
+          Text(
+            'ソフトフェアを最後に起動してから${widget.days}日が経過しましたので、削除プログラムを起動します。',
+            style: kErrorStyle,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '最後に確認のため、パスワードを入力して認証してください。\nパスワードを間違えると全て削除され、パスワードが一致すると、削除されず以前と同じようにご利用いただけます。',
+            style: kErrorStyle,
+          ),
           const SizedBox(height: 8),
           InfoLabel(
             label: 'パスワード',
@@ -147,6 +157,7 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
               await allRemovePrefs();
               await widget.folderService.truncate();
               await widget.fileService.truncate();
+              await FolderController().allDelete();
               await Future.delayed(const Duration(seconds: 2));
               if (!mounted) return;
               Navigator.pushReplacement(

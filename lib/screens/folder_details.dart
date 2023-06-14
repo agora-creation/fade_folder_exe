@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:fade_folder_exe/common/folder_controller.dart';
 import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/models/file.dart';
@@ -18,7 +17,6 @@ import 'package:fade_folder_exe/widgets/file_list_tile.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 class FolderDetailsScreen extends StatefulWidget {
   final FolderModel folder;
@@ -93,6 +91,10 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
                             onPressed: () async {
                               for (int id in checked) {
                                 await fileService.delete(id: id);
+                                FileModel file = files.singleWhere(
+                                  (e) => e.id == id,
+                                );
+                                FolderController().fileDelete(file.path);
                               }
                               checked.clear();
                               _getFiles();
@@ -235,14 +237,16 @@ class _EditFolderDialogState extends State<EditFolderDialog> {
           labelColor: whiteColor,
           backgroundColor: redColor,
           onPressed: () async {
+            int folderId = widget.folder.id ?? 0;
             String? error = await folderService.delete(
-              id: widget.folder.id ?? 0,
+              id: folderId,
             );
             if (error != null) {
               if (!mounted) return;
               showMessage(context, error, false);
               return;
             }
+            FolderController().delete(folderId);
             widget.init();
             if (!mounted) return;
             showMessage(context, '削除しました', true);
@@ -254,8 +258,9 @@ class _EditFolderDialogState extends State<EditFolderDialog> {
           labelColor: whiteColor,
           backgroundColor: blueColor,
           onPressed: () async {
+            int folderId = widget.folder.id ?? 0;
             String? error = await folderService.update(
-              id: widget.folder.id ?? 0,
+              id: folderId,
               name: name.text,
             );
             if (error != null) {
@@ -319,15 +324,13 @@ class _AddFileDialogState extends State<AddFileDialog> {
           labelColor: whiteColor,
           backgroundColor: blueColor,
           onPressed: () async {
-            final dir = await getApplicationDocumentsDirectory();
+            int folderId = widget.folder.id ?? 0;
             if (widget.files.isNotEmpty) {
               for (XFile file in widget.files) {
-                int folderId = widget.folder.id ?? 0;
-                String savedPath = '${dir.path}/fade_folder/$folderId';
-                await Directory(savedPath).create(recursive: true);
-                savedPath += '/${p.basename(file.path)}';
-                File savedFile = File(savedPath);
-                await savedFile.writeAsBytes(await file.readAsBytes());
+                String savedPath = await FolderController().upload(
+                  folderId,
+                  file,
+                );
                 await fileService.insert(
                   folderId: folderId,
                   path: savedPath,

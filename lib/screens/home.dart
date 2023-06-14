@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.settings),
-            title: const Text('設定'),
+            title: const Text('セキュリティ設定'),
             body: const SettingsScreen(),
           ),
           PaneItemSeparator(),

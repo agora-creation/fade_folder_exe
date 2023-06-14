@@ -55,7 +55,7 @@ class _SettingScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
-                    '設定',
+                    'セキュリティ設定',
                     style: TextStyle(fontSize: 18),
                   ),
                   CustomButton(
@@ -75,7 +75,7 @@ class _SettingScreenState extends State<SettingsScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              const CustomBorderTitle('セキュリティロック設定'),
+              const CustomBorderTitle('セキュリティロックについて'),
               const Text(
                 'ソフトウェアの起動時、第三者が閲覧できてしまうことを防止するため、パスワードを設定することができます。',
               ),
@@ -102,9 +102,13 @@ class _SettingScreenState extends State<SettingsScreen> {
                     )
                   : Container(),
               const SizedBox(height: 16),
-              const CustomBorderTitle('自動削除設定'),
+              const CustomBorderTitle('自動削除について'),
               const Text(
                 'ソフトウェアの起動を一定期間確認できなかった場合、このソフトウェア内に入っているデータを全て削除します。削除するまでの期日を設定してください。',
+              ),
+              const Text(
+                '※削除する前に、確認のためのパスワードを聞いてきます。パスワードはセキュリティロックのパスワードと同じで、パスワードを間違うと削除処理が行われます。パスワードが一致した場合は、削除は行われず、以前と同じようにお使いいただけます。',
+                style: kErrorStyle,
               ),
               const SizedBox(height: 16),
               ToggleSwitch(
@@ -119,7 +123,7 @@ class _SettingScreenState extends State<SettingsScreen> {
               const SizedBox(height: 8),
               autoDelete
                   ? InfoLabel(
-                      label: '閉じてから〇日後に自動削除',
+                      label: 'ソフトウェアを閉じてから$autoDeleteNum日後に自動削除',
                       child: CustomNumberBox(
                         value: autoDeleteNum,
                         onChanged: (value) {
