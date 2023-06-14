@@ -111,3 +111,6 @@ const List<String> audioExtension = [
   '.WAV',
   '.wav',
 ];
+
+//暗号化キー
+const kEncryptKey = 'JGJGdqnKS2pJVd6iad7Y8ui2rskQl4SJ';
