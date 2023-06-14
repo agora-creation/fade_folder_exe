@@ -34,7 +34,6 @@ class _SplashScreenState extends State<SplashScreen> {
     DateTime now = DateTime.now();
     Duration diff = now.difference(lastTime);
     int diffDays = diff.inDays;
-    diffDays = 10;
     bool autoDelete = await getPrefsBool('autoDelete') ?? false;
     int autoDeleteNum = await getPrefsInt('autoDeleteNum') ?? 0;
     String lockPassword = await getPrefsString('lockPassword') ?? '';
