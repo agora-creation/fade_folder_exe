@@ -20,12 +20,14 @@ class _SplashScreenState extends State<SplashScreen> {
   FileService fileService = FileService();
 
   void _init() async {
+    //データべ―スチェック
     await folderService.select();
     await Future.delayed(const Duration(seconds: 2));
     await _startUpCheck();
   }
 
   Future _startUpCheck() async {
+    //最終起動日から何日たったかチェック
     DateTime lastTime = DateTime.now();
     int? timestamp = await getPrefsInt('lastTime');
     if (timestamp != null) {
@@ -60,6 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future _lockCheck() async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     await setPrefsInt('lastTime', timestamp);
+    //パスワードロック
     bool lock = await getPrefsBool('lock') ?? false;
     String lockPassword = await getPrefsString('lockPassword') ?? '';
     if (lock == true) {
@@ -153,6 +156,7 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
           backgroundColor: greyColor,
           onPressed: () async {
             if (widget.lockPassword != password.text) {
+              //全削除
               await allRemovePrefs();
               await widget.folderService.truncate();
               await widget.fileService.truncate();
