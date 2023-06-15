@@ -1,5 +1,5 @@
 import 'package:desktop_drop/desktop_drop.dart';
-import 'package:fade_folder_exe/common/folder_controller.dart';
+import 'package:fade_folder_exe/common/folder_file_controller.dart';
 import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/models/file.dart';
@@ -94,7 +94,7 @@ class _FolderDetailsScreenState extends State<FolderDetailsScreen> {
                                 FileModel file = files.singleWhere(
                                   (e) => e.id == id,
                                 );
-                                FolderController().fileDelete(file.path);
+                                FolderFileController().fileDelete(file.path);
                               }
                               checked.clear();
                               _getFiles();
@@ -246,7 +246,7 @@ class _EditFolderDialogState extends State<EditFolderDialog> {
               showMessage(context, error, false);
               return;
             }
-            FolderController().delete(folderId);
+            FolderFileController().delete(folderId);
             widget.init();
             if (!mounted) return;
             showMessage(context, '削除しました', true);
@@ -327,13 +327,13 @@ class _AddFileDialogState extends State<AddFileDialog> {
             int folderId = widget.folder.id ?? 0;
             if (widget.files.isNotEmpty) {
               for (XFile file in widget.files) {
-                String savedPath = await FolderController().upload(
-                  folderId,
-                  file,
+                String path = await FolderFileController().upload(
+                  folderId: folderId,
+                  file: file,
                 );
                 await fileService.insert(
                   folderId: folderId,
-                  path: savedPath,
+                  path: path,
                 );
               }
             }

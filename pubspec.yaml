@@ -32,7 +32,7 @@ dependencies:
   http: ^0.13.0
   device_info_plus: ^8.1.0
   desktop_drop: ^0.4.1
-  encrypt: ^5.0.1
+  encrypt: ^5.0.0
 
 dev_dependencies:
   flutter_test:

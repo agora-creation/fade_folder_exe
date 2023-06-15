@@ -1,9 +1,7 @@
-import 'package:fade_folder_exe/common/folder_controller.dart';
+import 'package:fade_folder_exe/common/folder_file_controller.dart';
 import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/common/style.dart';
 import 'package:fade_folder_exe/screens/home.dart';
-import 'package:fade_folder_exe/services/file.dart';
-import 'package:fade_folder_exe/services/folder.dart';
 import 'package:fade_folder_exe/widgets/custom_button.dart';
 import 'package:fade_folder_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -16,18 +14,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  FolderService folderService = FolderService();
-  FileService fileService = FileService();
+  FolderFileController folderFileController = FolderFileController();
 
   void _init() async {
-    //データべ―スチェック
-    await folderService.select();
-    await Future.delayed(const Duration(seconds: 2));
-    await _startUpCheck();
+    await folderFileController.start();
+    await _daysCheck();
   }
 
-  Future _startUpCheck() async {
-    //最終起動日から何日たったかチェック
+  Future _daysCheck() async {
     DateTime lastTime = DateTime.now();
     int? timestamp = await getPrefsInt('lastTime');
     if (timestamp != null) {
@@ -44,8 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
       await showDialog(
         context: context,
         builder: (context) => AutoDeleteDialog(
-          folderService: folderService,
-          fileService: fileService,
           days: diffDays,
           lockPassword: lockPassword,
         ),
@@ -60,9 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future _lockCheck() async {
+    //
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     await setPrefsInt('lastTime', timestamp);
-    //パスワードロック
     bool lock = await getPrefsBool('lock') ?? false;
     String lockPassword = await getPrefsString('lockPassword') ?? '';
     if (lock == true) {
@@ -99,14 +91,10 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class AutoDeleteDialog extends StatefulWidget {
-  final FolderService folderService;
-  final FileService fileService;
   final int days;
   final String lockPassword;
 
   const AutoDeleteDialog({
-    required this.folderService,
-    required this.fileService,
     required this.days,
     required this.lockPassword,
     super.key,
@@ -117,6 +105,7 @@ class AutoDeleteDialog extends StatefulWidget {
 }
 
 class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
+  FolderFileController folderFileController = FolderFileController();
   TextEditingController password = TextEditingController();
 
   @override
@@ -156,12 +145,7 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
           backgroundColor: greyColor,
           onPressed: () async {
             if (widget.lockPassword != password.text) {
-              //全削除
-              await allRemovePrefs();
-              await widget.folderService.truncate();
-              await widget.fileService.truncate();
-              await FolderController().allDelete();
-              await Future.delayed(const Duration(seconds: 2));
+              await folderFileController.allReset();
               if (!mounted) return;
               Navigator.pushReplacement(
                 context,
@@ -170,6 +154,7 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
                 ),
               );
             } else {
+              //
               int timestamp = DateTime.now().millisecondsSinceEpoch;
               await setPrefsInt('lastTime', timestamp);
               if (!mounted) return;
