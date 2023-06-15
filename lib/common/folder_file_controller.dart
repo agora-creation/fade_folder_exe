@@ -32,8 +32,9 @@ class FolderFileController {
   }) async {
     final dir = await getApplicationSupportDirectory();
     String path = '${dir.path}/.fade_folder/$folderId';
-    //フォルダ作成
-    await Directory(path).create(recursive: true);
+    if (!await Directory(path).exists()) {
+      await Directory(path).create(recursive: true);
+    }
     path += '/${p.basename(file.path)}';
     File savedFile = File(path);
     await savedFile.writeAsBytes(await file.readAsBytes());
