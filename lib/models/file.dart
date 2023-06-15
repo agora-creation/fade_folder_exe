@@ -40,6 +40,14 @@ class FileModel {
   }
 
   Future<Uint8List> getFileData() async {
-    return await File(path).readAsBytes();
+    File f = File(path);
+    //復号化
+    // Uint8List encData = await f.readAsBytes();
+    // enc.Encrypted en = enc.Encrypted(encData);
+    // var plainData = FolderFileController.myEncrypter.decryptBytes(
+    //   en,
+    //   iv: FolderFileController.myIv,
+    // );
+    return await f.readAsBytes();
   }
 }

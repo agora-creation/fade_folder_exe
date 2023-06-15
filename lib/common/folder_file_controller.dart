@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:fade_folder_exe/common/functions.dart';
@@ -12,7 +13,6 @@ class FolderFileController {
   static final myKey = enc.Key.fromUtf8('xWaCuj1t8GoEFBtl8ReSIfVM0QHcfAA5');
   static final myIv = enc.IV.fromUtf8('dtctVyn0wbSTkBAp');
   static final myEncrypter = enc.Encrypter(enc.AES(myKey));
-
   FileService fileService = FileService();
   FolderService folderService = FolderService();
 
@@ -35,27 +35,25 @@ class FolderFileController {
     required int folderId,
     required XFile file,
   }) async {
-    final bytes = await file.readAsBytes();
     final dir = await getApplicationSupportDirectory();
-    String path = '${dir.path}/.fade_folder/$folderId';
-    if (!await Directory(path).exists()) {
-      await Directory(path).create(recursive: true);
+    String savedPath = '${dir.path}/.fade_folder/$folderId';
+    String savedFileName = p.basename(file.path);
+    if (!await Directory(savedPath).exists()) {
+      await Directory(savedPath).create(recursive: true);
     }
-    path += '/${p.basename(file.path)}';
-    File savedFile = File(path);
-    await savedFile.writeAsBytes(await file.readAsBytes());
-    // if (savedFile.existsSync()) {
-    //   //暗号化
-    //   final plainText = savedFile.readAsStringSync();
-    //   final key = Key.fromUtf8(kEncryptKey);
-    //   final iv = IV.fromLength(16);
-    //   final encrypt = Encrypter(AES(key));
-    //   final encryptedText = encrypt.encrypt(plainText, iv: iv);
-    //   final encryptedFile = File('${savedFile.path}.encrypted');
-    //   encryptedFile.writeAsStringSync(encryptedText.base64);
-    //   path = encryptedFile.path;
-    // }
-    return path;
+    //暗号化
+    // Uint8List orgData = await file.readAsBytes();
+    // final encrypted = myEncrypter.encryptBytes(orgData, iv: myIv);
+    // File savedFile = File('$savedPath/$savedFileName.aes');
+    // await savedFile.writeAsBytes(encrypted.bytes);
+    return '$savedPath/$savedFileName';
+  }
+
+  Future _getFile(String path) async {
+    File f = File(path);
+    Uint8List bytes = await f.readAsBytes();
+    enc.Encrypted en = enc.Encrypted(bytes);
+    var plainData = myEncrypter.decryptBytes(en, iv: myIv);
   }
 
   void fileDelete(String path) {
