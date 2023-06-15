@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:encrypt/encrypt.dart' as enc;
 import 'package:fade_folder_exe/common/functions.dart';
 import 'package:fade_folder_exe/services/file.dart';
 import 'package:fade_folder_exe/services/folder.dart';
@@ -8,6 +9,10 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class FolderFileController {
+  static final myKey = enc.Key.fromUtf8('xWaCuj1t8GoEFBtl8ReSIfVM0QHcfAA5');
+  static final myIv = enc.IV.fromUtf8('dtctVyn0wbSTkBAp');
+  static final myEncrypter = enc.Encrypter(enc.AES(myKey));
+
   FileService fileService = FileService();
   FolderService folderService = FolderService();
 
@@ -30,6 +35,7 @@ class FolderFileController {
     required int folderId,
     required XFile file,
   }) async {
+    final bytes = await file.readAsBytes();
     final dir = await getApplicationSupportDirectory();
     String path = '${dir.path}/.fade_folder/$folderId';
     if (!await Directory(path).exists()) {
