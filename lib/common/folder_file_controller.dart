@@ -41,11 +41,13 @@ class FolderFileController {
     if (!await Directory(savedPath).exists()) {
       await Directory(savedPath).create(recursive: true);
     }
+    Uint8List orgData = await file.readAsBytes();
     //暗号化
-    // Uint8List orgData = await file.readAsBytes();
     // final encrypted = myEncrypter.encryptBytes(orgData, iv: myIv);
     // File savedFile = File('$savedPath/$savedFileName.aes');
     // await savedFile.writeAsBytes(encrypted.bytes);
+    File savedFile = File('$savedPath/$savedFileName');
+    await savedFile.writeAsBytes(orgData);
     return '$savedPath/$savedFileName';
   }
 
