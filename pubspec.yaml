@@ -53,6 +53,8 @@ msix_config:
   certificate_password: p@ssw0rd
   architecture: x64
   capabilities: ""
+  store: true
+  debug: false
 flutter_launcher_icons:
   windows:
     generate: true
