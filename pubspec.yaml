@@ -48,9 +48,7 @@ msix_config:
   msix_version: 1.0.0.0
   logo_path: assets/images/logo.png
   languages: ja-jp
-  publisher: E=microsoft@agora-c.com, CN=B7179693-D78E-46A3-AB96-E087B93111AE, O=AGORA CREATION, L=Kochi, S=Kochi, C=JP
-  certificate_path: C:\Users\shima\selfsigned\CERTIFICATE.pfx
-  certificate_password: p@ssw0rd
+  publisher: CN=B7179693-D78E-46A3-AB96-E087B93111AE
   architecture: x64
   capabilities: ""
   store: true
