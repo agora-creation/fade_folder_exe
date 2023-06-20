@@ -44,11 +44,11 @@ dev_dependencies:
 msix_config:
   display_name: FadeFolder
   publisher_display_name: 有限会社アゴラ・クリエーション
-  identity_name: com.agoracreation.fadefolder
+  identity_name: AB4E4D12.FadeFolder
   msix_version: 1.0.0.0
   logo_path: assets/images/logo.png
   languages: ja-jp
-  publisher: E=microsoft@agora-c.com, CN=agora-c.com, O=AGORA CREATION, L=Kochi, S=Kochi, C=JP
+  publisher: E=microsoft@agora-c.com, CN=B7179693-D78E-46A3-AB96-E087B93111AE, O=AGORA CREATION, L=Kochi, S=Kochi, C=JP
   certificate_path: C:\Users\shima\selfsigned\CERTIFICATE.pfx
   certificate_password: p@ssw0rd
   architecture: x64
