@@ -154,7 +154,6 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
                 ),
               );
             } else {
-              //
               int timestamp = DateTime.now().millisecondsSinceEpoch;
               await setPrefsInt('lastTime', timestamp);
               if (!mounted) return;
@@ -164,6 +163,7 @@ class _AutoDeleteDialogState extends State<AutoDeleteDialog> {
                   builder: (context) => const HomeScreen(),
                 ),
               );
+              return;
             }
           },
         ),
